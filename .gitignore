@@ -1,5 +1,7 @@
 build/
 gradle/
-src/main/resources/static/lib/
+/src/main/resources/static/lib/
 .idea/
-.gradle/
+.idea/workspace.xml
+.gradle/**
+.gradle
