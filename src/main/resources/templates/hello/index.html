@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" ng-app="app">
 <head lang="en">
     <meta charset="UTF-8"/>
     <title></title>
 </head>
 <body>
 <h1>Hello World! !</h1>
+<div ng-controller="MainController as model">
 
+</div>
+
+<script th:src="@{/lib/underscore/underscore.js}"></script>
+<script th:src="@{/lib/angularjs/angular.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
