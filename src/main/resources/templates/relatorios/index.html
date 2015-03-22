@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" ng-app="app">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title></title>
+    <link rel="stylesheet" th:href="@{/lib/bootstrap/dist/css/bootstrap.css}"/>
+    <style>
+        table.table thead th {
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #e8e8e8;
+        }
+
+        table {
+            border-top: 1px solid #e8e8e8;
+        }
+    </style>
+</head>
+<body th:inline="javascript">
+<p>
+
+</p>
+<div class="content">
+    <h1>3501 - Classificação de Depêndencias</h1>
+    <div class="header">
+        <div>
+            <form class="form-inline">
+                <div class="form-group">
+                    <select name="visao" id="visao" placeholder="Prefixo" class="form-control">
+                        <option value="super">Superintendencias</option>
+                        <option value="gerev">Gerev</option>
+                        <option value="agencia">Agências</option>
+                    </select>
+                    <select name="gerev" id="gerev" placeholder="Gerevs" class="form-control">
+                        <option value="all">Todas</option>
+                    </select>
+
+                </div>
+                <hr/>
+            </form>
+        </div>
+        <table class="table">
+            <thead id="header-container" >
+
+            </thead>
+            <tbody id="body-container">
+
+            </tbody>
+        </table>
+    </div>
+    <div class="footer">
+
+    </div>
+</div>
+
+<script th:src="@{/lib/underscore/underscore.js}"></script>
+<script th:src="@{/lib/jquery/dist/jquery.js}"></script>
+<script th:src="@{/js/relatorios/core.js}"></script>
+<script>
+
+
+    $.postJSON = function(url, data, callback) {
+        return jQuery.ajax({
+            'type': 'POST',
+            'url': url,
+            'contentType': 'application/json',
+            'data': JSON.stringify(data),
+            'dataType': 'json',
+            'success': callback
+        });
+    }
+
+    $(function(){
+        var clearAndUpdateData = function(){
+            return ajaxData = $.postJSON('/relatorios/get-data', params)
+                    .then(function(data){
+                        window.allRows = data;
+                        $('#body-container').empty();
+                        $('#body-container').append(renderRows(data));
+                    });
+        }
+
+        var populateCombo = function(comboId, data){
+            var options = $(comboId);
+            options.empty();
+            $.each(data, function() {
+                options.append($("<option />").val(this.id).text(this.text));
+            });
+        }
+
+        var params = {
+            param: [
+                {visao: 'super', filtro: 'diretoria', value: '8592'}
+            ],
+            custom: {combo: "1"}
+        };
+
+        $('#visao').change(function(){
+            var visao = $('#visao option:selected').val();
+
+            params.param[0].visao = visao;
+            clearAndUpdateData()
+                    .then(function(d){
+                        var f =_.filter(gerevs, function(obj){ return obj.dbh_super == 8485 });
+                            f = _.map(f, function(obj){ return { id: obj.dbh_gerev, text: obj.dbh_nome }});
+                        populateCombo('#gerev', f);
+                    });
+
+        });
+
+
+
+        var ajax =  $.getJSON("/relatorios/get-columns")
+                .then(function(data){
+
+                    window.columns = data.columns;
+                    window.groups = data.groups;
+
+                    var header  = new Header(columns, groups);
+                    $('#header-container').append(header.render());
+                });
+
+
+
+        clearAndUpdateData();
+
+    });
+
+    var gerevs = JSON.parse([[${gerevs}]]);
+
+</script>
+</body>
+</html>
